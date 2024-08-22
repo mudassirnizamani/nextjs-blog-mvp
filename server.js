@@ -1,6 +1,6 @@
-import { createServer } from 'http'
-import { parse } from 'url'
-import next from 'next'
+const { createServer } = require('http')
+const { parse } = require('url')
+const next = require('next')
 
 const dev = process.env.NODE_ENV !== 'production'
 const hostname = 'localhost'
@@ -17,7 +17,7 @@ app.prepare().then(() => {
     try {
       // Be sure to pass `true` as the second argument to `url.parse`.
       // This tells it to parse the query portion of the URL.
-      const parsedUrl = parse(req.url!, true)
+      const parsedUrl = parse(req.url, true)
       const { pathname, query } = parsedUrl
 
       if (pathname === '/a') {

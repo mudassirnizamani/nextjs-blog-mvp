@@ -5,9 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "postinstall": "prisma generate",
-    "build": "prisma generate && next build",
+    "next:build": "prisma generate && next build",
+    "next:start": "next start",
     "lint": "next lint",
-     "dev": "node server.js",
+    "server:dev": "node server.js",
     "build": "next build",
     "start": "NODE_ENV=production node server.js"
   },
