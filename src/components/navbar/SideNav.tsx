@@ -105,32 +105,6 @@ export const navLinks = [
     icon: <Icon name="home" strokeWidth={1.25} />,
   },
   {
-    id: 2,
-    label: "Reading List",
-    icon: <Icon name="bookmark" strokeWidth={1.25} />,
-  },
-  {
-    id: 3,
-    label: "Listings",
-    icon: <Icon name="scroll-text" strokeWidth={1.25} />,
-  },
-  {
-    id: 4,
-    label: "Podcasts",
-    icon: <Icon name="mic" strokeWidth={1.25} />,
-  },
-  {
-    id: 5,
-    label: "Videos",
-    icon: <Icon name="youtube" strokeWidth={1.25} />,
-  },
-  {
-    id: 6,
-    label: "Tags",
-    path: "/tags",
-    icon: <Icon name="tag" strokeWidth={1.25} />,
-  },
-  {
     id: 7,
     label: "FAQ",
     icon: <Icon name="lightbulb" strokeWidth={1.25} />,
@@ -145,9 +119,36 @@ export const navLinks = [
     label: "Contact",
     icon: <Icon name="contact" strokeWidth={1.25} />,
   },
-  {
-    id: 11,
-    label: "Guides",
-    icon: <Icon name="book-open-check" strokeWidth={1.25} />,
-  },
 ];
+
+// {
+//   id: 2,
+//   label: "Reading List",
+//   icon: <Icon name="bookmark" strokeWidth={1.25} />,
+// },
+// {
+//   id: 3,
+//   label: "Listings",
+//   icon: <Icon name="scroll-text" strokeWidth={1.25} />,
+// },
+// {
+//   id: 4,
+//   label: "Podcasts",
+//   icon: <Icon name="mic" strokeWidth={1.25} />,
+// },
+// {
+//   id: 5,
+//   label: "Videos",
+//   icon: <Icon name="youtube" strokeWidth={1.25} />,
+// },
+// {
+//   id: 6,
+//   label: "Tags",
+//   path: "/tags",
+//   icon: <Icon name="tag" strokeWidth={1.25} />,
+// // },
+// {
+//   id: 11,
+//   label: "Guides",
+//   icon: <Icon name="book-open-check" strokeWidth={1.25} />,
+// },
