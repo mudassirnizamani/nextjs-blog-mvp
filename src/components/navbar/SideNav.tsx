@@ -145,8 +145,7 @@ export const navLinks = [
 //   id: 6,
 //   label: "Tags",
 //   path: "/tags",
-//   icon: <Icon name="tag" strokeWidth={1.25} />,
-// // },
+//   icon: <Icon name="tag" strokeWidth={1.25} />, },
 // {
 //   id: 11,
 //   label: "Guides",

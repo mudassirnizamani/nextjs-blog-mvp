@@ -84,7 +84,8 @@ const Navbar = () => {
                 <Icon name="search" strokeWidth={1.25} />
               </Button>
             </NavbarItem>
-
+            {/* Hide the Sign in and create account for now */}
+            {/* 
             <NavbarItem>
               <Button
                 as={Link}
@@ -109,7 +110,7 @@ const Navbar = () => {
               >
                 Create account
               </Button>
-            </NavbarItem>
+            </NavbarItem> */}
           </NavbarContent>
         )}
         <NavbarMenu>
