@@ -2,6 +2,7 @@ import { Button } from "@nextui-org/react";
 import Link from "next/link";
 import React from "react";
 import Icon from "../Icon";
+import { PiTiktokLogo } from "react-icons/pi";
 
 const SideNav = () => {
   return (
@@ -23,8 +24,8 @@ const SideNav = () => {
           </li>
         ))}
       </ul>
-      <ul className="flex justify-between items-center">
-        <li>
+      <ul className="flex  justify-between items-center">
+        {/* <li>
           <Button
             as={Link}
             href="https://github.com/tehseen01"
@@ -74,6 +75,19 @@ const SideNav = () => {
             className="text-black group"
           >
             <Icon name="instagram" strokeWidth={1.25} />
+          </Button>
+        </li> */}
+        <li>
+          <Button
+            as={Link}
+            href="https://www.tiktok.com/"
+            target="_blank"
+            isIconOnly
+            variant="light"
+            color="primary"
+            className="text-black group "
+          >
+            <PiTiktokLogo name="tiktok" size={20} strokeWidth={1.25} />
           </Button>
         </li>
       </ul>
