@@ -2,15 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-
-import prisma from "@/lib/db";
+import { findOne } from "@/utils/mongodbHelpers";
+import { UserModel } from "@/models/user_model";
 
 export async function POST(req: NextRequest) {
   try {
     const reqBody = await req.json();
     const { email, password } = reqBody;
 
-    const user = await prisma.user.findUnique({ where: { email: email } });
+    const user = await findOne<UserModel>("users", {
+      email: email,
+    });
+
 
     if (!user) {
       return NextResponse.json(

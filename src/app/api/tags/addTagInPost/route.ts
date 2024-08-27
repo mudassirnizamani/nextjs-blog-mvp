@@ -1,4 +1,5 @@
-import prisma from "@/lib/db";
+import db from "@/lib/db";
+import { findMany } from "@/utils/mongodbHelpers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -6,14 +7,13 @@ export async function GET(req: NextRequest) {
     const query = req.nextUrl.searchParams.get("q");
 
     if (query) {
-      const queryTags = await prisma.tag.findMany({
-        where: { value: { contains: query, mode: "insensitive" } },
-        take: 20,
+      const queryTags = await findMany("tags", {
+        value: { mode: "insensitive" },
       });
 
       return NextResponse.json(queryTags, { status: 200 });
     } else {
-      const tags = await prisma.tag.findMany({ take: 20 });
+      const tags = await db.collection("tags").find({}).toArray()
 
       return NextResponse.json(tags, { status: 200 });
     }

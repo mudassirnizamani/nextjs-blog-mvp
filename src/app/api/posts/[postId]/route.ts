@@ -1,10 +1,10 @@
-import prisma from "@/lib/db";
 import { deleteFileFromCloudinary } from "@/utils/deleteFileFromCloudinary";
 import { getDataFromToken } from "@/utils/getDataFromToken";
 import { getPublicIdCloudinary } from "@/utils/getPublicIdCloudinary";
 import { NextRequest, NextResponse } from "next/server";
-import { Prisma } from "@prisma/client";
 import { uploadImageToCloudinary } from "@/utils/uploadImageToCloudinary";
+import { deleteOne, findMany, findOne, updateOne } from "@/utils/mongodbHelpers";
+import { CommentModel, PostModel, ReplyModel } from "@/models/user_model";
 
 //@description     Get a single post
 //@route           GET /api/posts/[post.path]
@@ -14,38 +14,13 @@ export async function GET(
   { params }: { params: { postId: string } }
 ) {
   try {
-    const post = await prisma.post.findFirst({
-      where: { path: params.postId },
-      include: {
-        author: {
-          select: {
-            id: true,
-            name: true,
-            username: true,
-            avatar: true,
-            bio: true,
-            followerIDs: true,
-            followingIDs: true,
-            site: true,
-            posts: {
-              take: 4,
-              select: {
-                id: true,
-                path: true,
-                title: true,
-              },
-            },
-          },
-        },
-        _count: { select: { comments: true } },
-      },
+    const post = await findOne<PostModel>("posts", {
+      path: params.postId
     });
 
     if (post) {
-      await prisma.post.update({
-        where: { id: post.id },
-        data: { views: post.views + 1 }, // Increment the views by 1
-      });
+      await updateOne("posts", { id: post.id },
+        { views: post.views + 1 });
     } else {
       return NextResponse.json(
         { success: false, message: "Post not found!" },
@@ -81,7 +56,7 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
-    const post = await prisma.post.findUnique({ where: { id: postId } });
+    const post = await findOne<PostModel>("posts", { id: postId });
     if (!post || !postId) {
       return NextResponse.json(
         { success: false, message: "Invalid post ID!" },
@@ -89,7 +64,7 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
-    const updatedData: Prisma.PostUpdateInput = {};
+    const updatedData: any = {};
 
     if (title !== post.title) {
       updatedData.title = title;
@@ -118,10 +93,10 @@ export async function PATCH(req: NextRequest) {
     }
 
     if (Object.keys(updatedData).length > 0) {
-      await prisma.post.update({
-        where: { id: post.id },
-        data: updatedData,
-      });
+      await updateOne("posts",
+        { id: post.id },
+        updatedData,
+      );
     }
 
     return NextResponse.json(
@@ -154,9 +129,10 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    const post = await prisma.post.findFirst({
-      where: { id: postId, authorId: userID },
+    const post = await findOne<PostModel>("posts", {
+      id: postId, authorId: userID,
     });
+
     if (!post) {
       return NextResponse.json(
         { success: false, message: "Post not found!" },
@@ -169,28 +145,28 @@ export async function DELETE(req: NextRequest) {
       await deleteFileFromCloudinary(publicID!, "articles");
     }
 
-    const deleteToComment = await prisma.comment.findMany({
-      where: { postId: post.id },
-    });
+    const deleteToComment = await findMany<CommentModel>("comments",
+      { postId: post.id },
+    );
 
     // Delete all comments and there replies associated with the post
     for (const deleteId of deleteToComment) {
-      const repliesToDelete = await prisma.reply.findMany({
-        where: { commentId: deleteId.id },
+      const repliesToDelete = await findMany<ReplyModel>("replies", {
+        commentId: deleteId.id
       });
       for (const deleteReply of repliesToDelete) {
-        await prisma.reply.delete({
-          where: { id: deleteReply.id },
-        });
+        await deleteOne("replies",
+          { id: deleteReply.id },
+        );
       }
 
-      await prisma.comment.delete({
-        where: { id: deleteId.id },
+      await deleteOne("comments", {
+        id: deleteId.id
       });
     }
 
-    await prisma.post.delete({
-      where: { id: post.id, authorId: userID },
+    await deleteOne("posts", {
+      d: post.id, authorId: userID
     });
 
     return NextResponse.json(

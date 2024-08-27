@@ -1,8 +1,10 @@
 import cloudinary from "@/lib/config/cloudinary";
-import prisma from "@/lib/db";
+import { PostModel } from "@/models/user_model";
 import { getDataFromToken } from "@/utils/getDataFromToken";
-
+import { v4 as uuidv4 } from 'uuid';
 import { NextRequest, NextResponse } from "next/server";
+import db from "@/lib/db";
+import { count, findMany } from "@/utils/mongodbHelpers";
 
 //@description     Create a new post
 //@route           POST /api/posts
@@ -28,26 +30,20 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const newPost = await prisma.post.create({
-      data: {
-        title,
-        content,
-        path: makePath,
-        authorId: userID,
-        image: image !== null ? uploadedImage.secure_url : null,
-        type,
-      },
-      include: {
-        author: {
-          select: {
-            id: true,
-            name: true,
-            username: true,
-            avatar: true,
-          },
-        },
-      },
-    });
+    const uuid = uuidv4()
+    const newPost: Partial<PostModel> = {
+      title: title,
+      image: image !== null ? uploadedImage.secure_url : null,
+      content: content,
+      path: makePath,
+      authorId: userID,
+      type: type,
+      id: uuid,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+
+    await db.collection("posts").insertOne(newPost)
 
     return NextResponse.json(
       { success: true, message: "Post created successfully", newPost },
@@ -67,33 +63,16 @@ export async function GET(req: NextRequest) {
     const page = parseInt(req.nextUrl.searchParams.get("page") || "1");
     const limit = parseInt(req.nextUrl.searchParams.get("limit") || "10");
 
-    const skip = (page - 1) * limit;
+    // const skip = (page - 1) * limit;
 
-    const totalPostsCount = await prisma.post.count({
-      where: { NOT: { type: "DRAFT" } },
+    const totalPostsCount = await count("posts", {
+      type: "PUBLISHED"
     });
 
     const totalPages = Math.ceil(totalPostsCount / limit);
 
-    const posts = await prisma.post.findMany({
-      where: { NOT: { type: "DRAFT" } },
-      orderBy: {
-        createdAt: "desc",
-      },
-      include: {
-        author: {
-          select: {
-            id: true,
-            name: true,
-            username: true,
-            avatar: true,
-          },
-        },
-        saved: true,
-        _count: { select: { comments: true } },
-      },
-      skip,
-      take: limit,
+    const posts = await findMany("posts", {
+      type: "PUBLISHED"
     });
 
     return NextResponse.json(

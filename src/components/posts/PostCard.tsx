@@ -43,7 +43,7 @@ const PostCard = ({ post }: { post: TPost }) => {
   return (
     <article className="mb-2">
       <Card shadow="none" radius="sm" className="border">
-        <CardHeader>
+        {/* <CardHeader>
           <User
             as={Link}
             href={post.author.username}
@@ -53,13 +53,13 @@ const PostCard = ({ post }: { post: TPost }) => {
               src: `${post.author.avatar}`,
             }}
           />
-        </CardHeader>
+        </CardHeader> */}
         <CardBody className="py-0">
           <div className="flex items-center">
             <div className="flex-[2]">
               <h3 className="text-2xl font-bold">
                 <Link
-                  href={`/${post.author.username}/${post.path}`}
+                  href={`/${post.path}`}
                   className="hover:text-primary"
                 >
                   {post.title}
@@ -100,11 +100,11 @@ const PostCard = ({ post }: { post: TPost }) => {
               className="flex items-center gap-2"
               variant="light"
               as={Link}
-              href={`/${post.author.username}/${post.path}#comments`}
+              href={`/${post.path}#comments`}
             >
               <Icon name="message-circle" strokeWidth={1.25} />
               <span>
-                {post._count.comments}{" "}
+                {/*{post._count.comments}{" "}*/}
                 <span className="max-sm:hidden transpa">Comments</span>
               </span>
             </Button>
@@ -116,16 +116,15 @@ const PostCard = ({ post }: { post: TPost }) => {
               onPress={() => handleSaveLetterPost(post.id)}
               isDisabled={!authStatus ? true : false}
             >
-              <Icon
+              {/*<Icon
                 name="bookmark"
                 strokeWidth={1.25}
-                className={`${
-                  post.saved.some((id) => id.userId === user?.id) &&
+                className={`${post.saved.some((id) => id.userId === user?.id) &&
                   post.saved.some((id) => id.postId === post.id)
-                    ? "fill-black"
-                    : "fill-none"
-                }`}
-              />
+                  ? "fill-black"
+                  : "fill-none"
+                  }`}
+              /> */ }
             </Button>
           </div>
         </CardFooter>

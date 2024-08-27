@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "postinstall": "prisma generate --schema ./prisma/schema.prisma",
-    "next:build": "prisma generate && next build",
+    "postinstall123": "prisma generate --schema ./prisma/schema.prisma",
     "next:start": "next start",
     "lint": "next lint",
     "server:dev": "node server.js",
@@ -26,7 +25,6 @@
     "@editorjs/table": "^2.2.2",
     "@hookform/resolvers": "^3.2.0",
     "@nextui-org/react": "^2.1.13",
-    "@prisma/client": "^5.2.0",
     "@reduxjs/toolkit": "^1.9.5",
     "@tanstack/react-query": "^4.33.0",
     "@tanstack/react-query-devtools": "^4.33.0",
@@ -34,6 +32,7 @@
     "@types/node": "20.4.10",
     "@types/react": "18.2.20",
     "@types/react-dom": "18.2.7",
+    "@types/uuid": "^10.0.0",
     "autoprefixer": "10.4.14",
     "axios": "^1.4.0",
     "bcryptjs": "^2.4.3",
@@ -47,6 +46,7 @@
     "jsonwebtoken": "^9.0.1",
     "lucide-react": "^0.265.0",
     "moment": "^2.29.4",
+    "mongodb": "^6.8.0",
     "next": "13.4.13",
     "nodemailer": "^6.9.4",
     "postcss": "8.4.27",
@@ -61,13 +61,13 @@
     "react-top-loading-bar": "^2.3.1",
     "tailwindcss": "3.3.3",
     "typescript": "5.1.6",
+    "uuid": "^10.0.0",
     "zod": "^3.21.4"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.9",
     "@types/bcryptjs": "^2.4.2",
     "@types/react-syntax-highlighter": "^15.5.7",
-    "prisma": "^5.2.0",
     "ts-node": "^10.9.1"
   }
 }

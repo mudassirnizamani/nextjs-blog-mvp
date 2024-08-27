@@ -1,6 +1,10 @@
+import db from "@/lib/db";
 import prisma from "@/lib/db";
+import { ReplyModel } from "@/models/user_model";
 import { getDataFromToken } from "@/utils/getDataFromToken";
+import { deleteOne, findOne } from "@/utils/mongodbHelpers";
 import { NextRequest, NextResponse } from "next/server";
+import { v4 } from "uuid";
 
 export async function POST(req: NextRequest) {
   try {
@@ -21,9 +25,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const reply = await prisma.reply.create({
-      data: { content: replyText, commentId: commentId, authorId: userID },
-    });
+    const uuid = v4()
+    const reply: ReplyModel = {
+      commentId: commentId,
+      authorId: userID,
+      content: replyText,
+      id: uuid,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+
+     await db.collection("replies").insertOne(reply);
 
     return NextResponse.json(
       { success: true, message: "Reply added successfully", reply },
@@ -52,9 +64,10 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    const existReply = await prisma.reply.findUnique({
-      where: { id: replyId, authorId: userID },
+    const existReply = await findOne<ReplyModel>("replies", {
+      id: replyId, authorId: userID 
     });
+
     if (!existReply) {
       return NextResponse.json(
         { success: false, message: "Reply not found!" },
@@ -62,8 +75,8 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    const replyToDelete = await prisma.reply.delete({
-      where: { id: replyId, authorId: userID },
+    const replyToDelete = await deleteOne("replies", {
+       id: replyId, authorId: userID ,
     });
 
     return NextResponse.json(

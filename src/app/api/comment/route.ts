@@ -1,6 +1,9 @@
-import prisma from "@/lib/db";
+import db from "@/lib/db";
+import { CommentModel, PostModel, ReplyModel, UserModel } from "@/models/user_model";
 import { getDataFromToken } from "@/utils/getDataFromToken";
+import { deleteOne, findMany, findOne } from "@/utils/mongodbHelpers";
 import { NextRequest, NextResponse } from "next/server";
+import { v4 } from "uuid";
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,7 +18,7 @@ export async function POST(req: NextRequest) {
 
     const userID = await getDataFromToken(req);
 
-    const user = await prisma.user.findUnique({ where: { id: userID } });
+    const user = await findOne<UserModel>("users", { id: userID });
     if (!user) {
       return NextResponse.json(
         { success: false, message: "Please try login first!" },
@@ -23,7 +26,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const post = await prisma.post.findUnique({ where: { id: postID } });
+    const post = await findOne<PostModel>("posts", { id: postID });
     if (!post) {
       return NextResponse.json(
         {
@@ -34,9 +37,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    await prisma.comment.create({
-      data: { content: content, authorId: userID, postId: postID },
-    });
+    const uuid = v4()
+    const comment: CommentModel = {
+      postId: postID, content: content, authorId: userID, id: uuid, createdAt: new Date(), updatedAt: new Date()
+    }
+
+    await db.collection("comments").insertOne(comment)
 
     return NextResponse.json(
       { success: true, message: "Comment added successfully" },
@@ -58,39 +64,8 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const comments = await prisma.comment.findMany({
-      where: { postId: postId },
-      take: 10,
-      orderBy: { createdAt: "desc" },
-      include: {
-        author: {
-          select: {
-            id: true,
-            username: true,
-            avatar: true,
-            name: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        },
-        replies: {
-          take: 10,
-          orderBy: { createdAt: "desc" },
-          include: {
-            author: {
-              select: {
-                id: true,
-                username: true,
-                avatar: true,
-                name: true,
-                createdAt: true,
-                updatedAt: true,
-              },
-            },
-          },
-        },
-        _count: { select: { replies: true } },
-      },
+    const comments = await findMany("comments", {
+      postId: postId
     });
 
     return NextResponse.json(comments, { status: 200 });
@@ -114,8 +89,8 @@ export async function DELETE(req: NextRequest) {
     const userID = await getDataFromToken(req);
 
     // Check if the comment exists and if it belongs to the user
-    const existingComment = await prisma.comment.findFirst({
-      where: { id: commentId, authorId: userID },
+    const existingComment = await findOne<CommentModel>("comments", {
+      id: commentId, authorId: userID
     });
 
     if (!existingComment) {
@@ -129,16 +104,16 @@ export async function DELETE(req: NextRequest) {
     }
 
     // Find and delete all associated replies
-    const repliesToDelete = await prisma.reply.findMany({
-      where: { commentId },
+    const repliesToDelete = await findMany<ReplyModel>("replies", {
+      commentId: commentId,
     });
 
     // Delete the associated replies
     for (const reply of repliesToDelete) {
-      await prisma.reply.delete({ where: { id: reply.id } });
+      await deleteOne("replies", { id: reply.id });
     }
 
-    await prisma.comment.delete({ where: { id: commentId, authorId: userID } });
+    await deleteOne("comments", { id: commentId, authorId: userID });
 
     return NextResponse.json(
       { success: true, message: "Comment deleted successfully" },

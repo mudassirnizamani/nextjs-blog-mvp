@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import prisma from "@/lib/db";
 
 import { getDataFromToken } from "@/utils/getDataFromToken";
 import { deleteFileFromCloudinary } from "@/utils/deleteFileFromCloudinary";
 import { uploadImageToCloudinary } from "@/utils/uploadImageToCloudinary";
-
-import { Prisma } from "@prisma/client";
 import { getPublicIdCloudinary } from "@/utils/getPublicIdCloudinary";
+import { findOne, updateOne } from "@/utils/mongodbHelpers";
+import { UserModel } from "@/models/user_model";
 
 //@description     Get the current user
 //@route           GET /api/users/me
@@ -22,26 +21,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: userID },
-      select: {
-        id: true,
-        name: true,
-        username: true,
-        avatar: true,
-        bio: true,
-        createdAt: true,
-        site: true,
-        followerIDs: true,
-        followingIDs: true,
-        followingTags: true,
-        follower: true,
-        following: true,
-        updatedAt: true,
-        posts: true,
-        email: true,
-      },
-    });
+    const user = await findOne<UserModel>("users", { id: userID })
 
     return NextResponse.json(user, { status: 200 });
   } catch (error: any) {
@@ -64,7 +44,7 @@ export async function PUT(req: NextRequest) {
       );
     }
 
-    const user = await prisma.user.findUnique({ where: { id: userID } });
+    const user = await findOne<UserModel>("users", { id: userID })
     if (!user) {
       return NextResponse.json(
         { success: false, message: "User not found" },
@@ -72,7 +52,7 @@ export async function PUT(req: NextRequest) {
       );
     }
 
-    const updatedData: Prisma.UserUpdateInput = {};
+    const updatedData: any = {};
 
     if (name !== user.name) {
       updatedData.name = name;
@@ -105,10 +85,9 @@ export async function PUT(req: NextRequest) {
     }
 
     if (Object.keys(updatedData).length > 0) {
-      await prisma.user.update({
-        where: { id: user.id },
-        data: updatedData,
-      });
+      await updateOne("users", {
+        id: user.id
+      }, updatedData);
     }
 
     return NextResponse.json(

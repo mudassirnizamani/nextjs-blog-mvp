@@ -1,18 +1,20 @@
-import { PrismaClient } from "@prisma/client";
+import { Db, MongoClient } from "mongodb"
 
-declare global {
-  // eslint-disable-next-line no-var
-  var cachedPrisma: PrismaClient;
-}
+const url = "mongodb+srv://mudasiralinizamani:minemine@cluster0.1j2vw.mongodb.net/blog?retryWrites=true&w=majority&appName=Cluster0"
 
-let prisma: PrismaClient;
-if (process.env.NODE_ENV === "production") {
-  prisma = new PrismaClient();
-} else {
-  if (!global.cachedPrisma) {
-    global.cachedPrisma = new PrismaClient();
+export function getMongodb(): Db {
+  try {
+    const client = new MongoClient(url);
+    client.connect()
+
+    const db = client.db()
+
+    return db
+  } catch {
+    throw new Error("Error occurred while connecting to mongodb")
   }
-  prisma = global.cachedPrisma;
 }
 
-export default prisma;
+const db: Db = getMongodb()
+
+export default db;
