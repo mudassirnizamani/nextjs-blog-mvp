@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { uploadImageToCloudinary } from "@/utils/uploadImageToCloudinary";
 import { deleteOne, findMany, findOne, updateOne } from "@/utils/mongodbHelpers";
 import { CommentModel, PostModel, ReplyModel } from "@/models/user_model";
+import db from "@/lib/db";
 
 //@description     Get a single post
 //@route           GET /api/posts/[post.path]
@@ -14,9 +15,42 @@ export async function GET(
   { params }: { params: { postId: string } }
 ) {
   try {
-    const post = await findOne<PostModel>("posts", {
-      path: params.postId
-    });
+
+    // TODO: Write this aggregate queries better
+    const cursor = db.collection("posts").aggregate([
+      { $match: { path: params.postId } },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'authorId',
+          foreignField: 'id',
+          as: 'author'
+        }
+      },
+      {
+        $unwind: '$author'
+      }
+    ]);
+
+
+    const post = (await cursor.next()) as PostModel | null;
+
+    const posts: PostModel[] = await db.collection("posts").aggregate([
+      { $match: { type: "PUBLISHED" } },
+      // { $sort: postOrder },
+      // { $project: { _id: 1, title: 1, type: 1, path: 1, views: 1, createdAt: 1, authorId: 1 } },
+      {
+        $lookup: {
+          from: 'users', // replace with your users collection name
+          localField: 'authorId',
+          foreignField: 'id',
+          as: 'author'
+        }
+      },
+      {
+        $unwind: '$author'
+      }
+    ]).toArray() as PostModel[];
 
     if (post) {
       await updateOne("posts", { id: post.id },
@@ -28,7 +62,9 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(post, { status: 200 });
+    const ret: Object = { post: post, authorPosts: posts }
+
+    return NextResponse.json(ret, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ message: error.message }, { status: 500 });
   }

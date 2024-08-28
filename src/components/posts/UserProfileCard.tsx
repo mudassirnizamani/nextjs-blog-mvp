@@ -64,10 +64,11 @@ const UserProfileCard = ({ post }: { post: TPost }) => {
               </h5>
             </div>
           </Link>
+          { /* <Button
+
           {user && user?.id === post.author.id ? (
             <></>
           ) : (
-            <Button
               className={
                 isFollowed
                   ? "bg-transparent text-foreground border-default-200"
@@ -87,7 +88,9 @@ const UserProfileCard = ({ post }: { post: TPost }) => {
                 ? "Unfollow"
                 : "Follow"}
             </Button>
+
           )}
+                    */ }
         </CardHeader>
         <CardBody className="px-3 py-0 text-small text-default-500 overflow-hidden">
           <p>{post.author.bio}</p>
@@ -99,6 +102,7 @@ const UserProfileCard = ({ post }: { post: TPost }) => {
             {post.author.site}
           </Link>
         </CardBody>
+        { /*
         <CardFooter className="gap-3">
           <div className="flex gap-1">
             <p className="font-semibold text-default-400 text-small">
@@ -113,6 +117,7 @@ const UserProfileCard = ({ post }: { post: TPost }) => {
             <p className="text-default-400 text-small">Followers</p>
           </div>
         </CardFooter>
+      */ }
       </Card>
 
       <AuthModal isOpen={isOpen} onOpenChange={onOpenChange} />

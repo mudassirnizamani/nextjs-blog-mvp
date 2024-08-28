@@ -1,5 +1,4 @@
 import { getDataFromToken } from "@/utils/getDataFromToken";
-import { findMany } from "@/utils/mongodbHelpers";
 import { NextRequest, NextResponse } from "next/server";
 
 //@description     Save post for letter or remove from save letter

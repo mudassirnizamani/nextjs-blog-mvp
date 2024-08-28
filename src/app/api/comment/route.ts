@@ -2,6 +2,7 @@ import db from "@/lib/db";
 import { CommentModel, PostModel, ReplyModel, UserModel } from "@/models/user_model";
 import { getDataFromToken } from "@/utils/getDataFromToken";
 import { deleteOne, findMany, findOne } from "@/utils/mongodbHelpers";
+import { ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 import { v4 } from "uuid";
 
@@ -37,9 +38,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const uuid = v4()
+    const id = new ObjectId()
     const comment: CommentModel = {
-      postId: postID, content: content, authorId: userID, id: uuid, createdAt: new Date(), updatedAt: new Date()
+      _id: id, postId: postID, content: content, authorId: userID, id: id.toString(), createdAt: new Date(), updatedAt: new Date()
     }
 
     await db.collection("comments").insertOne(comment)

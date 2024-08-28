@@ -1,4 +1,7 @@
+import { ObjectId } from "mongodb";
+
 export interface UserModel {
+  _id: ObjectId
   id: string;
   name: string;
   username: string;
@@ -26,6 +29,7 @@ export interface UserModel {
 }
 
 export interface TagModel {
+  _id: ObjectId
   id: string;
   label: string;
   value: string;
@@ -38,6 +42,7 @@ export interface TagModel {
 }
 
 export interface ReplyModel {
+  _id: ObjectId
   id: string;
   content: string;
   // author: User;
@@ -49,6 +54,7 @@ export interface ReplyModel {
 }
 
 export interface CommentModel {
+  _id: ObjectId
   id: string;
   content: string;
   // author: User;
@@ -75,11 +81,12 @@ enum PostType {
 }
 
 export interface PostModel {
+  _id: ObjectId;
   id: string;
   title: string;
   path?: string;
   image?: string;
-  content?: any;
+  content: Object;
   author: UserModel;
   authorId: string;
   // tags: Tag[];

@@ -1,10 +1,9 @@
 import db from "@/lib/db";
-import prisma from "@/lib/db";
 import { ReplyModel } from "@/models/user_model";
 import { getDataFromToken } from "@/utils/getDataFromToken";
 import { deleteOne, findOne } from "@/utils/mongodbHelpers";
+import { ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
-import { v4 } from "uuid";
 
 export async function POST(req: NextRequest) {
   try {
@@ -25,17 +24,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const uuid = v4()
+    const id = new ObjectId()
     const reply: ReplyModel = {
+      _id: id,
       commentId: commentId,
       authorId: userID,
       content: replyText,
-      id: uuid,
+      id: id.toString(),
       createdAt: new Date(),
       updatedAt: new Date()
     }
 
-     await db.collection("replies").insertOne(reply);
+    await db.collection("replies").insertOne(reply);
 
     return NextResponse.json(
       { success: true, message: "Reply added successfully", reply },
@@ -65,7 +65,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     const existReply = await findOne<ReplyModel>("replies", {
-      id: replyId, authorId: userID 
+      id: replyId, authorId: userID
     });
 
     if (!existReply) {
@@ -76,7 +76,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     const replyToDelete = await deleteOne("replies", {
-       id: replyId, authorId: userID ,
+      id: replyId, authorId: userID,
     });
 
     return NextResponse.json(

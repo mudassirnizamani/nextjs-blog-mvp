@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import bcryptjs from "bcryptjs";
 import { findOne } from "@/utils/mongodbHelpers";
-import { v4 as uuidv4 } from 'uuid';
 import db from "@/lib/db";
 import { UserModel } from "@/models/user_model";
+import { ObjectId } from "mongodb";
 
 
 export async function POST(req: NextRequest, res: NextResponse) {
@@ -25,13 +25,14 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
     const hashedPassword = await bcryptjs.hash(password, 10);
 
-    const id = uuidv4();
+    const id = new ObjectId();
     const newUser: UserModel = {
+      _id: id,
       password: hashedPassword,
       name: name,
       username: username,
       email: email,
-      id: id,
+      id: id.toString(),
       createdAt: new Date(),
       bio: "",
       site: "",

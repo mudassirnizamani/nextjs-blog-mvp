@@ -91,7 +91,10 @@ const PostArticle = ({ post }: { post: TPost }) => {
         </div>
       </article>
       <hr className="pb-8" />
+      {/* 
+        TODO: Change this
       <Comments post={post} />
+      */}
 
       {/* ===DELETE MODAL=== */}
       <DeletePostModal

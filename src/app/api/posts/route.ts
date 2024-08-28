@@ -1,10 +1,10 @@
 import cloudinary from "@/lib/config/cloudinary";
 import { PostModel } from "@/models/user_model";
 import { getDataFromToken } from "@/utils/getDataFromToken";
-import { v4 as uuidv4 } from 'uuid';
 import { NextRequest, NextResponse } from "next/server";
 import db from "@/lib/db";
-import { count, findMany } from "@/utils/mongodbHelpers";
+import { count } from "@/utils/mongodbHelpers";
+import { ObjectId } from "mongodb";
 
 //@description     Create a new post
 //@route           POST /api/posts
@@ -30,15 +30,16 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const uuid = uuidv4()
+    const id = new ObjectId()
     const newPost: Partial<PostModel> = {
+      _id: id,
       title: title,
       image: image !== null ? uploadedImage.secure_url : null,
       content: content,
       path: makePath,
       authorId: userID,
       type: type,
-      id: uuid,
+      id: id.toString(),
       createdAt: new Date(),
       updatedAt: new Date()
     }
@@ -71,9 +72,23 @@ export async function GET(req: NextRequest) {
 
     const totalPages = Math.ceil(totalPostsCount / limit);
 
-    const posts = await findMany("posts", {
-      type: "PUBLISHED"
-    });
+    // TODO: Write this aggregation better
+    const posts: PostModel[] = await db.collection("posts").aggregate([
+      { $match: { type: "PUBLISHED" } },
+      // { $sort: postOrder },
+      // { $project: { _id: 1, title: 1, type: 1, path: 1, views: 1, createdAt: 1, authorId: 1 } },
+      {
+        $lookup: {
+          from: 'users', // replace with your users collection name
+          localField: 'authorId',
+          foreignField: 'id',
+          as: 'author'
+        }
+      },
+      {
+        $unwind: '$author'
+      }
+    ]).toArray() as PostModel[];
 
     return NextResponse.json(
       { posts, totalPages, currentPage: page },

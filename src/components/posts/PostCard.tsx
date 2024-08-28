@@ -59,7 +59,7 @@ const PostCard = ({ post }: { post: TPost }) => {
             <div className="flex-[2]">
               <h3 className="text-2xl font-bold">
                 <Link
-                  href={`/${post.path}`}
+                  href={`/${post.author.username}/${post.path}`}
                   className="hover:text-primary"
                 >
                   {post.title}
@@ -100,7 +100,7 @@ const PostCard = ({ post }: { post: TPost }) => {
               className="flex items-center gap-2"
               variant="light"
               as={Link}
-              href={`/${post.path}#comments`}
+              href={`/${post.author.username}/${post.path}#comments`}
             >
               <Icon name="message-circle" strokeWidth={1.25} />
               <span>

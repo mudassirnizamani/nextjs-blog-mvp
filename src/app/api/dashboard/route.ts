@@ -1,6 +1,5 @@
 import db from "@/lib/db";
-import prisma from "@/lib/db";
-import { PostModel, UserModel } from "@/models/user_model";
+import { UserModel } from "@/models/user_model";
 import { getDataFromToken } from "@/utils/getDataFromToken";
 import { findOne } from "@/utils/mongodbHelpers";
 import { NextRequest, NextResponse } from "next/server";
@@ -56,8 +55,7 @@ export async function GET(req: NextRequest) {
         $unwind: '$author'
       }
     ]).toArray() as any[];
-    
-    console.log(posts)
+
     user!.posts = posts;
 
     result = {

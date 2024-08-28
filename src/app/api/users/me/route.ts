@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-
 import { getDataFromToken } from "@/utils/getDataFromToken";
 import { deleteFileFromCloudinary } from "@/utils/deleteFileFromCloudinary";
 import { uploadImageToCloudinary } from "@/utils/uploadImageToCloudinary";

@@ -1,5 +1,4 @@
 import db from "@/lib/db";
-import prisma from "@/lib/db";
 import { PostModel, UserModel } from "@/models/user_model";
 import { getDataFromToken } from "@/utils/getDataFromToken";
 import { findOne } from "@/utils/mongodbHelpers";
