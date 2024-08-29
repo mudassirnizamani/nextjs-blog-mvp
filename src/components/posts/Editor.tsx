@@ -75,7 +75,7 @@ const Editor = ({ post }: { post: TPost | null }) => {
           router.push(`/dashboard`);
         } else {
           router.push(
-            `/${res.data.newPost.author.username}/${res.data.newPost.path}`
+            `/${res.data.author.username}/${res.data.newPost.path}`
           );
         }
       }

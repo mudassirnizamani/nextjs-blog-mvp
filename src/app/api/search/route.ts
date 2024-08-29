@@ -23,6 +23,7 @@ export async function GET(req: NextRequest) {
         type: "PUBLISHED",
       });
 
+      console.log(posts)
       posts = posts.filter(({ title }: PostModel) => title.includes(query ?? ""))
       return NextResponse.json(posts, { status: 200 });
     }
@@ -42,6 +43,7 @@ export async function GET(req: NextRequest) {
         let postsData = await findMany<PostModel>("posts", {
           type: "PUBLISHED",
         });
+
 
         postsData = postsData.filter(({ title }: PostModel) => title.includes(query))
         data = postsData;

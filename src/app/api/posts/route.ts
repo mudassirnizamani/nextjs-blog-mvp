@@ -1,9 +1,9 @@
 import cloudinary from "@/lib/config/cloudinary";
-import { PostModel } from "@/models/user_model";
+import { PostModel, UserModel } from "@/models/user_model";
 import { getDataFromToken } from "@/utils/getDataFromToken";
 import { NextRequest, NextResponse } from "next/server";
 import db from "@/lib/db";
-import { count } from "@/utils/mongodbHelpers";
+import { count, findOne } from "@/utils/mongodbHelpers";
 import { ObjectId } from "mongodb";
 
 //@description     Create a new post
@@ -18,6 +18,8 @@ export async function POST(req: NextRequest) {
         { status: 401 }
       );
     }
+    
+    const user = findOne<UserModel>("users", {id: userID})
 
     const { title, content, image, type } = await req.json();
 
@@ -47,7 +49,7 @@ export async function POST(req: NextRequest) {
     await db.collection("posts").insertOne(newPost)
 
     return NextResponse.json(
-      { success: true, message: "Post created successfully", newPost },
+      { success: true, message: "Post created successfully", newPost, author: user},
       { status: 201 }
     );
   } catch (error: any) {
@@ -87,7 +89,9 @@ export async function GET(req: NextRequest) {
       },
       {
         $unwind: '$author'
-      }
+      },
+        { $sort: { createdAt: -1 } } // -1 for descending order
+
     ]).toArray() as PostModel[];
 
     return NextResponse.json(

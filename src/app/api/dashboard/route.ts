@@ -53,7 +53,9 @@ export async function GET(req: NextRequest) {
       },
       {
         $unwind: '$author'
-      }
+      },
+      { $sort: { createdAt: -1 } } // -1 for descending order
+
     ]).toArray() as any[];
 
     user!.posts = posts;

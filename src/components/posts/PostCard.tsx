@@ -18,12 +18,12 @@ import toast from "react-hot-toast";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { setProgress } from "@/redux/commonSlice";
 import { useQueryClient } from "@tanstack/react-query";
+import Blocks from "editorjs-blocks-react-renderer";
 
 const PostCard = ({ post }: { post: TPost }) => {
   const dispatch = useAppDispatch();
 
   const { authStatus, user } = useAppSelector((state) => state.auth);
-
   const queryClient = useQueryClient();
 
   async function handleSaveLetterPost(postID: string) {
@@ -65,6 +65,16 @@ const PostCard = ({ post }: { post: TPost }) => {
                   {post.title}
                 </Link>
               </h3>
+              <div className="prose mt-4">
+                <Blocks
+                  data={post.content}
+                  renderers={{
+                    checkList: Checklist,
+                  }}
+                />
+              </div>
+
+              { /*
               <div className="pt-2">
                 <Button size="sm" variant="light">
                   #Javascript
@@ -79,6 +89,8 @@ const PostCard = ({ post }: { post: TPost }) => {
                   #Typescript
                 </Button>
               </div>
+                          */ }
+
             </div>
             {post.image !== null && (
               <figure className="max-md:hidden flex-1 w-full h-full">
@@ -95,7 +107,7 @@ const PostCard = ({ post }: { post: TPost }) => {
         </CardBody>
         <CardFooter className="justify-between">
           <div className="flex items-center gap-4">
-            <div>5 Reacts</div>
+            {/* <div>5 Reacts</div> */}
             <Button
               className="flex items-center gap-2"
               variant="light"
@@ -130,6 +142,21 @@ const PostCard = ({ post }: { post: TPost }) => {
         </CardFooter>
       </Card>
     </article>
+  );
+};
+
+
+const Checklist = ({ data, className = "my-2" }: any) => {
+  return (
+    <>
+      {data?.items.slice(0, 3).map((item: any, i: any) => (
+        <p key={i} className={className}>
+          <label>
+            <input type="checkbox" checked={item.checked} /> {item.text.replace("<br>", " ")}
+          </label>
+        </p>
+      ))}
+    </>
   );
 };
 
