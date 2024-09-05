@@ -1,12 +1,13 @@
-import prisma from "@/lib/db";
+import { PostModel } from "@/models/user_model";
 import {
-  FILTER_COMMENTS,
-  FILTER_MY_POSTS_ONLY,
-  FILTER_PEOPLE,
+  // FILTER_COMMENTS,
+  // FILTER_MY_POSTS_ONLY,
+  // FILTER_PEOPLE,
   FILTER_POSTS,
-  FILTER_TAGS,
+  // FILTER_TAGS,
 } from "@/utils/constants";
 import { getDataFromToken } from "@/utils/getDataFromToken";
+import { findMany } from "@/utils/mongodbHelpers";
 import { NextRequest, NextResponse } from "next/server";
 
 //@description     Get results for search queries
@@ -18,23 +19,12 @@ export async function GET(req: NextRequest) {
     const filter = req.nextUrl.searchParams.get("filter");
 
     if (!query) {
-      const posts = await prisma.post.findMany({
-        where: { NOT: [{ type: "DRAFT" }] },
-        include: {
-          author: {
-            select: {
-              id: true,
-              name: true,
-              username: true,
-              avatar: true,
-            },
-          },
-          saved: true,
-          _count: { select: { comments: true } },
-        },
-        take: 10,
-        orderBy: { createdAt: "desc" },
+      let posts = await findMany<PostModel>("posts", {
+        type: "PUBLISHED",
       });
+
+      console.log(posts)
+      posts = posts.filter(({ title }: PostModel) => title.includes(query ?? ""))
       return NextResponse.json(posts, { status: 200 });
     }
 
@@ -50,119 +40,95 @@ export async function GET(req: NextRequest) {
 
     switch (filter) {
       case FILTER_POSTS:
-        const postData = await prisma.post.findMany({
-          where: {
-            title: { contains: query, mode: "insensitive" },
-            NOT: [{ type: "DRAFT" }],
-          },
-          include: {
-            author: {
-              select: {
-                id: true,
-                name: true,
-                username: true,
-                avatar: true,
-              },
-            },
-            saved: true,
-            _count: { select: { comments: true } },
-          },
-        });
-        data = postData;
-        break;
-      case FILTER_PEOPLE:
-        const peopleData = await prisma.user.findMany({
-          where: {
-            OR: [
-              { name: { contains: query, mode: "insensitive" } },
-              { username: { contains: query, mode: "insensitive" } },
-            ],
-          },
-          select: {
-            id: true,
-            name: true,
-            username: true,
-            avatar: true,
-          },
+        let postsData = await findMany<PostModel>("posts", {
+          type: "PUBLISHED",
         });
 
-        data = peopleData;
+
+        postsData = postsData.filter(({ title }: PostModel) => title.includes(query))
+        data = postsData;
         break;
-      case FILTER_COMMENTS:
-        const commentsData = await prisma.comment.findMany({
-          where: {
-            content: { contains: query, mode: "insensitive" },
-            NOT: [{ post: { type: "DRAFT" } }],
-          },
-          select: {
-            id: true,
-            post: {
-              include: {
-                author: {
-                  select: {
-                    id: true,
-                    name: true,
-                    username: true,
-                    avatar: true,
-                  },
-                },
-                saved: true,
-                _count: { select: { comments: true } },
-              },
-            },
-          },
-        });
-        data = commentsData;
-        break;
-      case FILTER_TAGS:
-        const tagsData = await prisma.tag.findMany({
-          where: { value: { contains: query, mode: "insensitive" } },
-        });
-        data = tagsData;
-        break;
-      case FILTER_MY_POSTS_ONLY:
-        const myPostsData = await prisma.post.findMany({
-          where: {
-            AND: [
-              { authorId: userID },
-              { title: { contains: query, mode: "insensitive" } },
-            ],
-          },
-          include: {
-            author: {
-              select: {
-                id: true,
-                name: true,
-                username: true,
-                avatar: true,
-              },
-            },
-            saved: true,
-            _count: { select: { comments: true } },
-          },
-        });
-        data = myPostsData;
-        break;
+      // case FILTER_PEOPLE:
+      //   const peopleData = await findMany({
+      //     where: {
+      //       OR: [
+      //         { name: { contains: query, mode: "insensitive" } },
+      //         { username: { contains: query, mode: "insensitive" } },
+      //       ],
+      //     },
+      //     select: {
+      //       id: true,
+      //       name: true,
+      //       username: true,
+      //       avatar: true,
+      //     },
+      //   });
+      //
+      //   data = peopleData;
+      //   break;
+      // case FILTER_COMMENTS:
+      //   const commentsData = await prisma.comment.findMany({
+      //     where: {
+      //       content: { contains: query, mode: "insensitive" },
+      //       NOT: [{ post: { type: "DRAFT" } }],
+      //     },
+      //     select: {
+      //       id: true,
+      //       post: {
+      //         include: {
+      //           author: {
+      //             select: {
+      //               id: true,
+      //               name: true,
+      //               username: true,
+      //               avatar: true,
+      //             },
+      //           },
+      //           saved: true,
+      //           _count: { select: { comments: true } },
+      //         },
+      //       },
+      //     },
+      //   });
+      //   data = commentsData;
+      //   break;
+      // case FILTER_TAGS:
+      //   const tagsData = await prisma.tag.findMany({
+      //     where: { value: { contains: query, mode: "insensitive" } },
+      //   });
+      //   data = tagsData;
+      //   break;
+      // case FILTER_MY_POSTS_ONLY:
+      //   const myPostsData = await prisma.post.findMany({
+      //     where: {
+      //       AND: [
+      //         { authorId: userID },
+      //         { title: { contains: query, mode: "insensitive" } },
+      //       ],
+      //     },
+      //     include: {
+      //       author: {
+      //         select: {
+      //           id: true,
+      //           name: true,
+      //           username: true,
+      //           avatar: true,
+      //         },
+      //       },
+      //       saved: true,
+      //       _count: { select: { comments: true } },
+      //     },
+      //   });
+      //   data = myPostsData;
+      //   break;
       default:
-        const defaultPosts = await prisma.post.findMany({
-          where: {
-            title: { contains: query, mode: "insensitive" },
-            NOT: [{ type: "DRAFT" }],
-          },
-          include: {
-            author: {
-              select: {
-                id: true,
-                name: true,
-                username: true,
-                avatar: true,
-              },
-            },
-            saved: true,
-            _count: { select: { comments: true } },
-          },
+        let defaultPosts = await findMany<PostModel>("posts", {
+          type: "PUBLISHED",
         });
-        data = defaultPosts;
+
+        postsData = defaultPosts.filter(({ title }: PostModel) => title.includes(query))
+        data = postsData;
+
         break;
     }
 

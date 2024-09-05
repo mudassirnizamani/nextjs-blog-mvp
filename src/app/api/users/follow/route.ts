@@ -1,5 +1,6 @@
-import prisma from "@/lib/db";
+import { UserModel } from "@/models/user_model";
 import { getDataFromToken } from "@/utils/getDataFromToken";
+import { findOne } from "@/utils/mongodbHelpers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, res: NextResponse) {
@@ -7,8 +8,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
     const { userId } = await req.json();
     const currentUserId = await getDataFromToken(req);
 
-    const currentUser = await prisma.user.findUnique({
-      where: { id: currentUserId },
+    const currentUser = await findOne<UserModel>("users", {
+      id: currentUserId,
     });
 
     if (!currentUser) {
@@ -18,34 +19,34 @@ export async function POST(req: NextRequest, res: NextResponse) {
       );
     }
 
-    if (currentUser.followingIDs.includes(userId)) {
-      // UnFollow
-      await prisma.user.update({
-        where: { id: currentUserId },
-        data: { following: { disconnect: { id: userId } } },
-      });
-
-      await prisma.user.update({
-        where: { id: userId },
-        data: { follower: { disconnect: { id: currentUserId } } },
-      });
-
-      return NextResponse.json(
-        { success: true, message: "User unFollowed successfully" },
-        { status: 200 }
-      );
-    } else {
-      // Follow
-      await prisma.user.update({
-        where: { id: currentUserId },
-        data: { following: { connect: { id: userId } } },
-      });
-
-      await prisma.user.update({
-        where: { id: userId },
-        data: { follower: { connect: { id: currentUserId } } },
-      });
-    }
+    // if (currentUser.followingIDs.includes(userId)) {
+    //   // UnFollow
+    //   // await prisma.user.update({
+    //   //   where: { id: currentUserId },
+    //   //   data: { following: { disconnect: { id: userId } } },
+    //   // });
+    //   //
+    //   // await prisma.user.update({
+    //   //   where: { id: userId },
+    //   //   data: { follower: { disconnect: { id: currentUserId } } },
+    //   // });
+    //
+    //   return NextResponse.json(
+    //     { success: true, message: "User unFollowed successfully" },
+    //     { status: 200 }
+    //   );
+    // } else {
+    //   // Follow
+    //   // await prisma.user.update({
+    //   //   where: { id: currentUserId },
+    //   //   data: { following: { connect: { id: userId } } },
+    //   // });
+    //   //
+    //   // await prisma.user.update({
+    //   //   where: { id: userId },
+    //   //   data: { follower: { connect: { id: currentUserId } } },
+    //   // });
+    // }
 
     return NextResponse.json(
       { success: true, message: "User followed successfully" },

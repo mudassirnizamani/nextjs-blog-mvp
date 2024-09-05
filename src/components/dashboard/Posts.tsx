@@ -101,7 +101,7 @@ const DashboardPosts = ({ dashboardData }: { dashboardData: TDashboard }) => {
                   </Chip>
                 ) : (
                   <div className="flex gap-2 items-center text-sm">
-                    <span className="flex gap-1">
+                    { /*<span className="flex gap-1">
                       <Icon name="heart" strokeWidth={1.25} size={20} />0
                     </span>
                     <span className="flex gap-1">
@@ -119,7 +119,7 @@ const DashboardPosts = ({ dashboardData }: { dashboardData: TDashboard }) => {
                     <span className="flex gap-1">
                       <Icon name="eye" strokeWidth={1.25} size={20} />
                       {post.views}
-                    </span>
+                    </span> */ }
                   </div>
                 )}
                 <div className="justify-self-end">

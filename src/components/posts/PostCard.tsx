@@ -18,12 +18,12 @@ import toast from "react-hot-toast";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { setProgress } from "@/redux/commonSlice";
 import { useQueryClient } from "@tanstack/react-query";
+import Blocks from "editorjs-blocks-react-renderer";
 
 const PostCard = ({ post }: { post: TPost }) => {
   const dispatch = useAppDispatch();
 
   const { authStatus, user } = useAppSelector((state) => state.auth);
-
   const queryClient = useQueryClient();
 
   async function handleSaveLetterPost(postID: string) {
@@ -43,7 +43,7 @@ const PostCard = ({ post }: { post: TPost }) => {
   return (
     <article className="mb-2">
       <Card shadow="none" radius="sm" className="border">
-        <CardHeader>
+        {/* <CardHeader>
           <User
             as={Link}
             href={post.author.username}
@@ -53,7 +53,7 @@ const PostCard = ({ post }: { post: TPost }) => {
               src: `${post.author.avatar}`,
             }}
           />
-        </CardHeader>
+        </CardHeader> */}
         <CardBody className="py-0">
           <div className="flex items-center">
             <div className="flex-[2]">
@@ -65,6 +65,16 @@ const PostCard = ({ post }: { post: TPost }) => {
                   {post.title}
                 </Link>
               </h3>
+              <div className="prose mt-4">
+                <Blocks
+                  data={post.content}
+                  renderers={{
+                    checkList: Checklist,
+                  }}
+                />
+              </div>
+
+              { /*
               <div className="pt-2">
                 <Button size="sm" variant="light">
                   #Javascript
@@ -79,6 +89,8 @@ const PostCard = ({ post }: { post: TPost }) => {
                   #Typescript
                 </Button>
               </div>
+                          */ }
+
             </div>
             {post.image !== null && (
               <figure className="max-md:hidden flex-1 w-full h-full">
@@ -95,7 +107,7 @@ const PostCard = ({ post }: { post: TPost }) => {
         </CardBody>
         <CardFooter className="justify-between">
           <div className="flex items-center gap-4">
-            <div>5 Reacts</div>
+            {/* <div>5 Reacts</div> */}
             <Button
               className="flex items-center gap-2"
               variant="light"
@@ -104,7 +116,7 @@ const PostCard = ({ post }: { post: TPost }) => {
             >
               <Icon name="message-circle" strokeWidth={1.25} />
               <span>
-                {post._count.comments}{" "}
+                {/*{post._count.comments}{" "}*/}
                 <span className="max-sm:hidden transpa">Comments</span>
               </span>
             </Button>
@@ -116,21 +128,35 @@ const PostCard = ({ post }: { post: TPost }) => {
               onPress={() => handleSaveLetterPost(post.id)}
               isDisabled={!authStatus ? true : false}
             >
-              <Icon
+              {/*<Icon
                 name="bookmark"
                 strokeWidth={1.25}
-                className={`${
-                  post.saved.some((id) => id.userId === user?.id) &&
+                className={`${post.saved.some((id) => id.userId === user?.id) &&
                   post.saved.some((id) => id.postId === post.id)
-                    ? "fill-black"
-                    : "fill-none"
-                }`}
-              />
+                  ? "fill-black"
+                  : "fill-none"
+                  }`}
+              /> */ }
             </Button>
           </div>
         </CardFooter>
       </Card>
     </article>
+  );
+};
+
+
+const Checklist = ({ data, className = "my-2" }: any) => {
+  return (
+    <>
+      {data?.items.slice(0, 3).map((item: any, i: any) => (
+        <p key={i} className={className}>
+          <label>
+            <input type="checkbox" checked={item.checked} /> {item.text.replace("<br>", " ")}
+          </label>
+        </p>
+      ))}
+    </>
   );
 };
 

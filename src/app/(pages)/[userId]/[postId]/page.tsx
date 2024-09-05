@@ -9,7 +9,6 @@ import {
   Avatar,
   Card,
   CardBody,
-  CardFooter,
   CardHeader,
   Divider,
 } from "@nextui-org/react";
@@ -27,7 +26,7 @@ const Page = ({ params }: TPostProp) => {
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["posts", params.postId],
-    queryFn: async (): Promise<TPost> => {
+    queryFn: async (): Promise<{ post: TPost, authorPosts: TPost[] }> => {
       const { data } = await axios.get(`/api/posts/${params.postId}`);
       return data;
     },
@@ -55,32 +54,32 @@ const Page = ({ params }: TPostProp) => {
     <>
       <main className="grid grid-cols-1 md:grid-cols-[65%_35%] p-2 md:py-6 md:px-16 h-full gap-4">
         <section>
-          {data && Object.entries(data).length > 0 && (
-            <PostArticle post={data} />
+          {data && Object.entries(data.post).length > 0 && (
+            <PostArticle post={data.post} />
           )}
         </section>
         <aside className="">
-          {data && Object.entries(data).length > 0 && (
+          {data && Object.entries(data.post).length > 0 && (
             <>
-              <UserProfileCard post={data} />
+              <UserProfileCard post={data.post} />
               <Card className="border mt-8" shadow="none" radius="sm">
                 <CardHeader>
                   <h3 className="text-xl font-bold">
                     More from{" "}
                     <Link
-                      href={`/${data.author.username}`}
+                      href={`/${data.post.author.username}`}
                       className="text-primary hover:text-primary-600"
                     >
-                      {data.author.username}
+                      {data.post.author.username}
                     </Link>
                   </h3>
                 </CardHeader>
                 <Divider />
                 <CardBody className="px-0 pb-0">
-                  {data.author.posts.map((post) => (
+                  {data.authorPosts.map((post) => (
                     <div key={post.id} className="">
                       <Link href={post.path} className="p-4 flex gap-3 group">
-                        <Avatar src={data.author.avatar} size="sm" />
+                        <Avatar src={post.author.avatar} size="sm" />
                         <div>
                           <h5 className="group-hover:text-primary">
                             {post.title}

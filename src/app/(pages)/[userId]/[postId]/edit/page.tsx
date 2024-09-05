@@ -18,14 +18,14 @@ const EditPost = ({ params }: { params: { postId: string } }) => {
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["posts", params.postId],
-    queryFn: async (): Promise<TPost> => {
+    queryFn: async (): Promise<{ post: TPost }> => {
       const { data } = await axios.get(`/api/posts/${params.postId}`);
       return data;
     },
     retry: 1,
   });
 
-  if ((data && data.author.id !== user?.id) || !authStatus) {
+  if ((data && data.post.author.id !== user?.id) || !authStatus) {
     return (
       <div className="flex items-center justify-center flex-col h-[80vh]">
         <div className="inline-flex rounded-full bg-yellow-100 p-4">
@@ -65,7 +65,7 @@ const EditPost = ({ params }: { params: { postId: string } }) => {
 
   return (
     <main className="fixed inset-0 w-full h-full bg-background z-50 ">
-      {data && Object.entries(data).length > 0 && <Editor post={data} />}
+      {data && Object.entries(data.post).length > 0 && <Editor post={data.post} />}
     </main>
   );
 };

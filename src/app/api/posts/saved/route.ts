@@ -1,4 +1,3 @@
-import prisma from "@/lib/db";
 import { getDataFromToken } from "@/utils/getDataFromToken";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -14,26 +13,29 @@ export async function GET(req: NextRequest) {
         { status: 401 }
       );
 
-    const savedPost = await prisma.savedPost.findMany({
-      where: { userId: userID },
-      include: {
-        post: {
-          select: {
-            id: true,
-            path: true,
-            title: true,
-            author: {
-              select: {
-                id: true,
-                avatar: true,
-                username: true,
-                name: true,
-              },
-            },
-          },
-        },
-      },
-    });
+    // const savedPost = await findMany("posts" {
+    //   where: { userId: userID },
+    //   include: {
+    //     post: {
+    //       select: {
+    //         id: true,
+    //         path: true,
+    //         title: true,
+    //         author: {
+    //           select: {
+    //             id: true,
+    //             avatar: true,
+    //             username: true,
+    //             name: true,
+    //           },
+    //         },
+    //       },
+    //     },
+    //   },
+    // });
+    //
+
+    const savedPost: any = []
 
     return NextResponse.json(savedPost, { status: 200 });
   } catch (error: any) {
@@ -61,21 +63,23 @@ export async function POST(req: NextRequest) {
         { status: 401 }
       );
 
-    const savePosts = await prisma.savedPost.findFirst({
-      where: { userId: userID, postId: postID },
-    });
+    // const savePosts = await prisma.savedPost.findFirst({
+    //   where: { userId: userID, postId: postID },
+    // });
+
+    const savePosts: any = false
 
     if (!savePosts) {
-      await prisma.savedPost.create({
-        data: { postId: postID, userId: userID },
-      });
+      // await prisma.savedPost.create({
+      //   data: { postId: postID, userId: userID },
+      // });
 
       return NextResponse.json(
         { success: true, message: "Post saved for letter" },
         { status: 201 }
       );
     } else {
-      await prisma.savedPost.delete({ where: { id: savePosts.id } });
+      // await prisma.savedPost.delete({ where: { id: savePosts.id } });
 
       return NextResponse.json(
         { success: true, message: "Post removed from saved letter" },

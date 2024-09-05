@@ -1,4 +1,5 @@
-import prisma from "@/lib/db";
+import { UserModel } from "@/models/user_model";
+import { findOne } from "@/utils/mongodbHelpers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -6,40 +7,8 @@ export async function GET(
   { params }: { params: { username: string } }
 ) {
   try {
-    const user = await prisma.user.findFirst({
-      where: { username: params.username },
-      select: {
-        id: true,
-        name: true,
-        username: true,
-        bio: true,
-        avatar: true,
-        email: true,
-        createdAt: true,
-        updatedAt: true,
-        followerIDs: true,
-        followingIDs: true,
-        comment: true,
-        followingTags: true,
-        posts: {
-          orderBy: {
-            createdAt: "desc",
-          },
-          where: { NOT: { type: "DRAFT" } },
-          include: {
-            _count: { select: { comments: true } },
-            saved: true,
-            author: {
-              select: {
-                id: true,
-                name: true,
-                username: true,
-                avatar: true,
-              },
-            },
-          },
-        },
-      },
+    const user = await findOne<UserModel>("uses", {
+      username: params.username
     });
 
     if (!user) {

@@ -1,8 +1,10 @@
 import cloudinary from "@/lib/config/cloudinary";
-import prisma from "@/lib/db";
+import { PostModel, UserModel } from "@/models/user_model";
 import { getDataFromToken } from "@/utils/getDataFromToken";
-
 import { NextRequest, NextResponse } from "next/server";
+import db from "@/lib/db";
+import { count, findOne } from "@/utils/mongodbHelpers";
+import { ObjectId } from "mongodb";
 
 //@description     Create a new post
 //@route           POST /api/posts
@@ -16,6 +18,8 @@ export async function POST(req: NextRequest) {
         { status: 401 }
       );
     }
+    
+    const user = findOne<UserModel>("users", {id: userID})
 
     const { title, content, image, type } = await req.json();
 
@@ -28,29 +32,24 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const newPost = await prisma.post.create({
-      data: {
-        title,
-        content,
-        path: makePath,
-        authorId: userID,
-        image: image !== null ? uploadedImage.secure_url : null,
-        type,
-      },
-      include: {
-        author: {
-          select: {
-            id: true,
-            name: true,
-            username: true,
-            avatar: true,
-          },
-        },
-      },
-    });
+    const id = new ObjectId()
+    const newPost: Partial<PostModel> = {
+      _id: id,
+      title: title,
+      image: image !== null ? uploadedImage.secure_url : null,
+      content: content,
+      path: makePath,
+      authorId: userID,
+      type: type,
+      id: id.toString(),
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+
+    await db.collection("posts").insertOne(newPost)
 
     return NextResponse.json(
-      { success: true, message: "Post created successfully", newPost },
+      { success: true, message: "Post created successfully", newPost, author: user},
       { status: 201 }
     );
   } catch (error: any) {
@@ -67,34 +66,33 @@ export async function GET(req: NextRequest) {
     const page = parseInt(req.nextUrl.searchParams.get("page") || "1");
     const limit = parseInt(req.nextUrl.searchParams.get("limit") || "10");
 
-    const skip = (page - 1) * limit;
+    // const skip = (page - 1) * limit;
 
-    const totalPostsCount = await prisma.post.count({
-      where: { NOT: { type: "DRAFT" } },
+    const totalPostsCount = await count("posts", {
+      type: "PUBLISHED"
     });
 
     const totalPages = Math.ceil(totalPostsCount / limit);
 
-    const posts = await prisma.post.findMany({
-      where: { NOT: { type: "DRAFT" } },
-      orderBy: {
-        createdAt: "desc",
+    // TODO: Write this aggregation better
+    const posts: PostModel[] = await db.collection("posts").aggregate([
+      { $match: { type: "PUBLISHED" } },
+      // { $sort: postOrder },
+      // { $project: { _id: 1, title: 1, type: 1, path: 1, views: 1, createdAt: 1, authorId: 1 } },
+      {
+        $lookup: {
+          from: 'users', // replace with your users collection name
+          localField: 'authorId',
+          foreignField: 'id',
+          as: 'author'
+        }
       },
-      include: {
-        author: {
-          select: {
-            id: true,
-            name: true,
-            username: true,
-            avatar: true,
-          },
-        },
-        saved: true,
-        _count: { select: { comments: true } },
+      {
+        $unwind: '$author'
       },
-      skip,
-      take: limit,
-    });
+        { $sort: { createdAt: -1 } } // -1 for descending order
+
+    ]).toArray() as PostModel[];
 
     return NextResponse.json(
       { posts, totalPages, currentPage: page },
