@@ -8,7 +8,7 @@ const SideNav = () => {
   return (
     <nav className="sticky top-[90px] left-0 flex justify-between flex-col h-[calc(100vh_-_110px)]">
       <ul>
-        {navLinks.map((link) => (
+        {/* {navLinks.map((link) => (
           <li key={link.id}>
             <Button
               href={link.path ? `${link.path}` : "/"}
@@ -22,8 +22,9 @@ const SideNav = () => {
               <span>{link.label}</span>
             </Button>
           </li>
-        ))}
+        ))} */}
       </ul>
+      {/* // {test} */}
       <ul className="flex  justify-between items-center">
         {/* <li>
           <Button
@@ -77,6 +78,7 @@ const SideNav = () => {
             <Icon name="instagram" strokeWidth={1.25} />
           </Button>
         </li> */}
+        {/* Tiktok  */}
         <li>
           <Button
             as={Link}

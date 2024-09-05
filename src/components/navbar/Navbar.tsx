@@ -16,7 +16,7 @@ import Icon from "../Icon";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 
 import Link from "next/link";
-import { navLinks } from "./SideNav";
+
 import NavbarProfile from "./NavbarProfile";
 import SearchInput from "../search/SearchInput";
 import LoadingBar from "react-top-loading-bar";
@@ -44,7 +44,7 @@ const Navbar = () => {
         maxWidth="full"
         classNames={{ wrapper: "max-md:px-2" }}
       >
-        <NavbarContent>
+        <NavbarContent className="">
           <NavbarMenuToggle
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             className="sm:hidden"
@@ -63,10 +63,31 @@ const Navbar = () => {
             </Button>
           </NavbarBrand>
           {/* ---SEARCH BAR--- */}
-          <div className="max-md:hidden">
+          <div className="max-md:hidden ">
             <SearchInput />
           </div>
         </NavbarContent>
+        {/* Navbar */}
+        <div className="sticky left-0 flex items-center justify-between flex-row max-md:hidden  ">
+          {" "}
+          <ul className="flex justify-between items-center max-md:hidden ">
+            {navLinks.map((link) => (
+              <li key={link.id}>
+                <Button
+                  href={link.path ? `${link.path}` : "/"}
+                  className="justify-start text-black hover:underline hover:text-primary group"
+                  as={Link}
+                  variant="light"
+                  color="primary"
+                  fullWidth
+                >
+                  <span>{link.icon}</span>
+                  <span>{link.label}</span>
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </div>
         {/* ===AUTH USER ACCESS=== */}
         {authStatus ? (
           <NavbarProfile />
@@ -134,3 +155,27 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+export const navLinks = [
+  {
+    id: 1,
+    label: "Home",
+    path: "/",
+    icon: <Icon name="home" strokeWidth={1.25} />,
+  },
+  {
+    id: 7,
+    label: "FAQ",
+    icon: <Icon name="lightbulb" strokeWidth={1.25} />,
+  },
+  {
+    id: 9,
+    label: "About",
+    icon: <Icon name="user" strokeWidth={1.25} />,
+  },
+  {
+    id: 10,
+    label: "Contact",
+    icon: <Icon name="contact" strokeWidth={1.25} />,
+  },
+];
