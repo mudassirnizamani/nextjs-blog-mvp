@@ -2,12 +2,13 @@ import { Button } from "@nextui-org/react";
 import Link from "next/link";
 import React from "react";
 import Icon from "../Icon";
+import { PiTiktokLogo } from "react-icons/pi";
 
 const SideNav = () => {
   return (
     <nav className="sticky top-[90px] left-0 flex justify-between flex-col h-[calc(100vh_-_110px)]">
       <ul>
-        {navLinks.map((link) => (
+        {/* {navLinks.map((link) => (
           <li key={link.id}>
             <Button
               href={link.path ? `${link.path}` : "/"}
@@ -21,10 +22,11 @@ const SideNav = () => {
               <span>{link.label}</span>
             </Button>
           </li>
-        ))}
+        ))} */}
       </ul>
-      <ul className="flex justify-between items-center">
-        <li>
+      {/* // {test} */}
+      <ul className="flex  justify-between items-center">
+        {/* <li>
           <Button
             as={Link}
             href="https://github.com/tehseen01"
@@ -75,6 +77,20 @@ const SideNav = () => {
           >
             <Icon name="instagram" strokeWidth={1.25} />
           </Button>
+        </li> */}
+        {/* Tiktok  */}
+        <li>
+          <Button
+            as={Link}
+            href="https://www.tiktok.com/"
+            target="_blank"
+            isIconOnly
+            variant="light"
+            color="primary"
+            className="text-black group "
+          >
+            <PiTiktokLogo name="tiktok" size={20} strokeWidth={1.25} />
+          </Button>
         </li>
       </ul>
     </nav>
@@ -91,32 +107,6 @@ export const navLinks = [
     icon: <Icon name="home" strokeWidth={1.25} />,
   },
   {
-    id: 2,
-    label: "Reading List",
-    icon: <Icon name="bookmark" strokeWidth={1.25} />,
-  },
-  {
-    id: 3,
-    label: "Listings",
-    icon: <Icon name="scroll-text" strokeWidth={1.25} />,
-  },
-  {
-    id: 4,
-    label: "Podcasts",
-    icon: <Icon name="mic" strokeWidth={1.25} />,
-  },
-  {
-    id: 5,
-    label: "Videos",
-    icon: <Icon name="youtube" strokeWidth={1.25} />,
-  },
-  {
-    id: 6,
-    label: "Tags",
-    path: "/tags",
-    icon: <Icon name="tag" strokeWidth={1.25} />,
-  },
-  {
     id: 7,
     label: "FAQ",
     icon: <Icon name="lightbulb" strokeWidth={1.25} />,
@@ -131,9 +121,35 @@ export const navLinks = [
     label: "Contact",
     icon: <Icon name="contact" strokeWidth={1.25} />,
   },
-  {
-    id: 11,
-    label: "Guides",
-    icon: <Icon name="book-open-check" strokeWidth={1.25} />,
-  },
 ];
+
+// {
+//   id: 2,
+//   label: "Reading List",
+//   icon: <Icon name="bookmark" strokeWidth={1.25} />,
+// },
+// {
+//   id: 3,
+//   label: "Listings",
+//   icon: <Icon name="scroll-text" strokeWidth={1.25} />,
+// },
+// {
+//   id: 4,
+//   label: "Podcasts",
+//   icon: <Icon name="mic" strokeWidth={1.25} />,
+// },
+// {
+//   id: 5,
+//   label: "Videos",
+//   icon: <Icon name="youtube" strokeWidth={1.25} />,
+// },
+// {
+//   id: 6,
+//   label: "Tags",
+//   path: "/tags",
+//   icon: <Icon name="tag" strokeWidth={1.25} />, },
+// {
+//   id: 11,
+//   label: "Guides",
+//   icon: <Icon name="book-open-check" strokeWidth={1.25} />,
+// },
