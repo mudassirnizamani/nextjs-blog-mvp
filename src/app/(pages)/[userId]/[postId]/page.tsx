@@ -16,7 +16,7 @@ import { useQuery } from "@tanstack/react-query";
 import Footer from "@/components/Footer";
 import { useAppDispatch } from "@/hooks/reduxHooks";
 import { setProgress } from "@/redux/commonSlice";
-import { Helmet } from 'react-helmet';
+import Head from "next/head";
 
 type TPostProp = {
   params: { postId: string };
@@ -53,16 +53,16 @@ const Page = ({ params }: TPostProp) => {
 
   return (
     <>
-      <Helmet>
-        <title>{data?.post?.title}</title>
-        <meta name="description" content={data?.post?.title} />
-        <meta name="keywords" content="Javascript, React js, Next.js, CSS" />
-        <meta name="author" content={data?.post?.author?.username} />
-        <meta property="og:title" content={data?.post?.title} />
-        <meta property="og:description" content={data?.post?.title} />
-        <meta property="og:image" content={data?.post?.image} />
-        <meta property="og:url" content={window.location.href} />
-      </Helmet>
+      <Head>
+        <meta property="og:title" content={data.post.title} />
+        <meta property="og:description" content={data.post.title} />
+        <meta property="og:image" content={data.post.image} />
+        <meta property="og:url" content={`https://madeafamily.com/${data.post.author.username}/${data.post.path}`} />
+        <meta property="og:type" content="article" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:site_name" content="MadeaFamily" />
+      </Head>
       <main className="flex items-center justify-center h-full gap-4 place-items-center">
         { /*<main className="grid grid-cols-1 md:grid-cols-[65%_35%] p-2 md:py-6 md:px-16 h-full gap-4"> */}
         <section>
