@@ -58,11 +58,12 @@ export default function Home() {
           <SideNav />
         </aside>
         <main>
-          <header className="mb-2">
+          { /* <header className="mb-2">
             <Button variant="light">For you</Button>
             <Button variant="light">Latest</Button>
             <Button variant="light">Trending</Button>
           </header>
+          */ }
           {/* ===POST CARD SKELETON=== */}
           {isLoading && (
             <div className="w-full">

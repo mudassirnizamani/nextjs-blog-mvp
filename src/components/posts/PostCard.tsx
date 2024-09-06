@@ -40,6 +40,8 @@ const PostCard = ({ post }: { post: TPost }) => {
     }
   }
 
+  console.log("Post Data")
+  console.log(post.content.data)
   return (
     <article className="mb-2">
       <Card shadow="none" radius="sm" className="border">
@@ -57,7 +59,7 @@ const PostCard = ({ post }: { post: TPost }) => {
         <CardBody className="py-0">
           <div className="flex items-center">
             <div className="flex-[2]">
-              <h3 className="text-2xl font-bold">
+              <h3 className="text-2xl font-bold mb-4">
                 <Link
                   href={`/${post.author.username}/${post.path}`}
                   className="hover:text-primary"
@@ -65,6 +67,17 @@ const PostCard = ({ post }: { post: TPost }) => {
                   {post.title}
                 </Link>
               </h3>
+              {post.image !== null && (
+                <figure className="max-md:hidden flex-1 w-full h-[25rem]">
+                  <Image
+                    src={post.image}
+                    width={200}
+                    height={200}
+                    alt="about image"
+                    className="rounded-md object-cover w-full h-full aspect-[4/2]"
+                  />
+                </figure>
+              )}
               <div className="prose mt-4">
                 <Blocks
                   data={post.content}
@@ -92,17 +105,6 @@ const PostCard = ({ post }: { post: TPost }) => {
                           */ }
 
             </div>
-            {post.image !== null && (
-              <figure className="max-md:hidden flex-1 w-full h-full">
-                <Image
-                  src={post.image}
-                  width={200}
-                  height={200}
-                  alt="about image"
-                  className="rounded-md object-cover w-full h-full aspect-[4/2]"
-                />
-              </figure>
-            )}
           </div>
         </CardBody>
         <CardFooter className="justify-between">
@@ -149,7 +151,7 @@ const PostCard = ({ post }: { post: TPost }) => {
 const Checklist = ({ data, className = "my-2" }: any) => {
   return (
     <>
-      {data?.items.slice(0, 3).map((item: any, i: any) => (
+      {data?.items.slice(0, 1).map((item: any, i: any) => (
         <p key={i} className={className}>
           <label>
             <input type="checkbox" checked={item.checked} /> {item.text.replace("<br>", " ")}

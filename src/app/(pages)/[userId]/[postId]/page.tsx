@@ -1,21 +1,22 @@
 "use client";
 import PostArticle from "@/components/posts/PostArticle";
-import UserProfileCard from "@/components/posts/UserProfileCard";
+// import UserProfileCard from "@/components/posts/UserProfileCard";
 import { TPost } from "@/lib/types";
 import axios from "axios";
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Avatar,
-  Card,
-  CardBody,
-  CardHeader,
-  Divider,
-} from "@nextui-org/react";
-import Link from "next/link";
+// import {
+//   Avatar,
+//   Card,
+//   CardBody,
+//   CardHeader,
+//   Divider,
+// } from "@nextui-org/react";
+// import Link from "next/link";
 import Footer from "@/components/Footer";
 import { useAppDispatch } from "@/hooks/reduxHooks";
 import { setProgress } from "@/redux/commonSlice";
+import { Helmet } from 'react-helmet';
 
 type TPostProp = {
   params: { postId: string };
@@ -52,12 +53,24 @@ const Page = ({ params }: TPostProp) => {
 
   return (
     <>
-      <main className="grid grid-cols-1 md:grid-cols-[65%_35%] p-2 md:py-6 md:px-16 h-full gap-4">
+      <Helmet>
+        <title>{data?.post?.title}</title>
+        <meta name="description" content={data?.post?.title} />
+        <meta name="keywords" content="Javascript, React js, Next.js, CSS" />
+        <meta name="author" content={data?.post?.author?.username} />
+        <meta property="og:title" content={data?.post?.title} />
+        <meta property="og:description" content={data?.post?.title} />
+        <meta property="og:image" content={data?.post?.image} />
+        <meta property="og:url" content={window.location.href} />
+      </Helmet>
+      <main className="flex items-center justify-center h-full gap-4 place-items-center">
+        { /*<main className="grid grid-cols-1 md:grid-cols-[65%_35%] p-2 md:py-6 md:px-16 h-full gap-4"> */}
         <section>
           {data && Object.entries(data.post).length > 0 && (
             <PostArticle post={data.post} />
           )}
         </section>
+        { /*
         <aside className="">
           {data && Object.entries(data.post).length > 0 && (
             <>
@@ -100,6 +113,7 @@ const Page = ({ params }: TPostProp) => {
             </>
           )}
         </aside>
+        */ }
       </main>
       <Footer />
     </>

@@ -26,20 +26,12 @@ const PostArticle = ({ post }: { post: TPost }) => {
 
   return (
     <>
-      <article className="pb-4">
+      <div className="pb-4 w-[50%] ml-[27rem] mt-[2rem]">
         <header>
-          {post.image !== null && (
-            <figure className="w-full max-h-[350px] mb-4">
-              <Image
-                src={post.image}
-                width={400}
-                height={200}
-                className="w-full h-full object-cover max-h-[350px] md:aspect-[5/2] aspect-[4/2]"
-                alt={post.title}
-              />
-            </figure>
-          )}
-          <div className="flex justify-between items-center">
+          <h1 className="mb-6 mt-4 scroll-m-20 lg:text-5xl md:text-4xl text-3xl sm:font-extrabold font-bold tracking-tight">
+            {post.title}
+          </h1>
+          <div className="flex justify-between items-center mb-5">
             <User
               name={post.author.name}
               as={Link}
@@ -77,11 +69,20 @@ const PostArticle = ({ post }: { post: TPost }) => {
               </ButtonGroup>
             ) : null}
           </div>
-          <h1 className="mb-6 mt-4 scroll-m-20 lg:text-5xl md:text-4xl text-3xl sm:font-extrabold font-bold tracking-tight">
-            {post.title}
-          </h1>
+          {post.image !== null && (
+            <figure className="w-full max-h-[25rem] mb-4">
+              <Image
+                src={post.image}
+                width={300}
+                height={200}
+                // className="w-full h-full object-cover max-h-[350px] md:aspect-[5/2] aspect-[2/2]"
+                className="rounded-md object-cover w-full h-full aspect-[4/2]"
+                alt={post.title}
+              />
+            </figure>
+          )}
         </header>
-        <div className="prose">
+        <div className="prose mt-[2rem]">
           <Blocks
             data={post.content}
             renderers={{
@@ -89,7 +90,7 @@ const PostArticle = ({ post }: { post: TPost }) => {
             }}
           />
         </div>
-      </article>
+      </div>
       <hr className="pb-8" />
       {/* 
         TODO: Change this
