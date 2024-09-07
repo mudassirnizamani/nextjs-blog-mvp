@@ -1,4 +1,4 @@
-import { parseMetadataFile } from "@/metadata/metadata_parser";
+import { JsonMetadata, parseMetadataFile } from "@/metadata/metadata_parser";
 import type { Metadata } from "next";
 import path from "path";
 
@@ -8,38 +8,30 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  // const id = `${params.userId}/${params.postId}`;
-  //
-  //
-  console.log("parsin metadatajson")
+  const id = `${params.userId}/${params.postId}`;
 
+  let metadata: JsonMetadata = {}
   try {
     const metadataPath = path.join(process.cwd(), 'public', 'metadata.json');
-    const metadataFrom = parseMetadataFile(metadataPath);
-    console.log(metadataFrom);
+    metadata = parseMetadataFile(metadataPath);
   } catch (e) {
     console.log("error occurred while parsing the file")
   }
-  const metadata = {
-    "title": "Post for ubaid",
-    "description": "This is a blog from MadeaFamily",
-    "image": "https://res.cloudinary.com/mudassir-nizamani/image/upload/v1725529947/blog/articles/dbzwzvik3tbvg0b6wbtj.png"
-  }
 
   return {
-    title: metadata.title,
-    description: metadata.description,
+    title: metadata[id].title,
+    description: metadata[id].description,
     openGraph: {
-      images: metadata.image,
-      title: metadata.title,
-      description: metadata.description,
+      images: metadata[id].image,
+      title: metadata[id].title,
+      description: metadata[id].description,
       type: "article",
       url: `https://madeafamily.com/`
     },
     twitter: {
-      images: metadata.image,
-      title: metadata.title,
-      description: metadata.description,
+      images: metadata[id].image,
+      title: metadata[id].title,
+      description: metadata[id].description,
     }
   };
 }

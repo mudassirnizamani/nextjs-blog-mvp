@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-interface JsonMetadata {
+export interface JsonMetadata {
   [key: string]: {
     title: string;
     description: string;
