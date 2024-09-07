@@ -5,8 +5,6 @@ import {
   Card,
   CardBody,
   CardFooter,
-  CardHeader,
-  User,
 } from "@nextui-org/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -40,8 +38,6 @@ const PostCard = ({ post }: { post: TPost }) => {
     }
   }
 
-  console.log("Post Data")
-  console.log(post.content.data)
   return (
     <article className="mb-2">
       <Card shadow="none" radius="sm" className="border">
