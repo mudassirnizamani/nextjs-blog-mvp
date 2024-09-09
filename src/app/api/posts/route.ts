@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import db from "@/lib/db";
 import { count, findOne } from "@/utils/mongodbHelpers";
 import { ObjectId } from "mongodb";
+import { JsonMetadata, updateJsonFile } from "@/metadata/metadata_parser";
 
 //@description     Create a new post
 //@route           POST /api/posts
@@ -18,25 +19,25 @@ export async function POST(req: NextRequest) {
         { status: 401 }
       );
     }
-    
-    const user = findOne<UserModel>("users", {id: userID})
+
+    const user = await findOne<UserModel>("users", { id: userID })
 
     const { title, content, image, type } = await req.json();
 
     const makePath = title.split(" ").join("-").toLowerCase();
-
     let uploadedImage = null;
-    if (image !== null) {
-      uploadedImage = await cloudinary.uploader.upload(image, {
-        folder: "blog/articles",
-      });
-    }
+    // if (image !== null) {
+    //   uploadedImage = await cloudinary.uploader.upload(image, {
+    //     folder: "blog/articles",
+    //   });
+    // }
+
 
     const id = new ObjectId()
     const newPost: Partial<PostModel> = {
       _id: id,
       title: title,
-      image: image !== null ? uploadedImage.secure_url : null,
+      image: image !== null ? uploadedImage! : null,
       content: content,
       path: makePath,
       authorId: userID,
@@ -48,8 +49,20 @@ export async function POST(req: NextRequest) {
 
     await db.collection("posts").insertOne(newPost)
 
+    console.log('created post')
+
+    const saveJsonDate: JsonMetadata = {
+      [`${user?.username}/${makePath}`]: {
+        image: newPost.image ?? "",
+        title: newPost.title ?? "",
+        description: "This is a post from MeadeaFamily"
+      },
+    }
+    updateJsonFile(saveJsonDate)
+
+    console.log('update json')
     return NextResponse.json(
-      { success: true, message: "Post created successfully", newPost, author: user},
+      { success: true, message: "Post created successfully", newPost, author: user },
       { status: 201 }
     );
   } catch (error: any) {
@@ -90,7 +103,7 @@ export async function GET(req: NextRequest) {
       {
         $unwind: '$author'
       },
-        { $sort: { createdAt: -1 } } // -1 for descending order
+      { $sort: { createdAt: -1 } } // -1 for descending order
 
     ]).toArray() as PostModel[];
 

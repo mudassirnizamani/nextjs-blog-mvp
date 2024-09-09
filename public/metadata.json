@@ -1,12 +1,1 @@
-{
-  "admin/post-for-ubaid": {
-    "title": "Post for ubaid",
-    "description": "This is a blog from MadeaFamily",
-    "image": "https://res.cloudinary.com/mudassir-nizamani/image/upload/v1725529947/blog/articles/dbzwzvik3tbvg0b6wbtj.png"
-  },
-  "admin/test": {
-    "title": "Hello",
-    "description": "Mine"
-  }
-}
-
+{}

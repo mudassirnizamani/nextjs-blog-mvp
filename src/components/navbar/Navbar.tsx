@@ -12,6 +12,7 @@ import {
   NavbarMenuItem,
 } from "@nextui-org/react";
 import Icon from "../Icon";
+import Image from "next/image"
 
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 
@@ -50,7 +51,7 @@ const Navbar = () => {
             className="sm:hidden"
           />
           <NavbarBrand className="basis-0 grow-0">
-            <Button
+            { /* <Button
               href={"/"}
               as={Link}
               variant="solid"
@@ -60,7 +61,14 @@ const Navbar = () => {
               className=" bg-black/90 text-white"
             >
               TEN
-            </Button>
+            </Button> */}
+            <Image
+              src="/logo.jpg" // replace with your image path
+              alt="next-blog home page"
+              width={50} // replace with your desired width
+              height={50} // replace with your desired height
+              className="bg-black/90"
+            />
           </NavbarBrand>
           {/* ---SEARCH BAR--- */}
           <div className="max-md:hidden ">

@@ -37,6 +37,7 @@ const PostCard = ({ post }: { post: TPost }) => {
       console.log(error);
     }
   }
+  console.log(post.content.blocks)
 
   return (
     <article className="mb-2">
@@ -64,7 +65,7 @@ const PostCard = ({ post }: { post: TPost }) => {
                 </Link>
               </h3>
               {post.image !== null && (
-                <figure className="max-md:hidden flex-1 w-full h-[25rem]">
+                <figure className="flex-1 w-full h-[25rem]">
                   <Image
                     src={post.image}
                     width={200}

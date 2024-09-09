@@ -9,8 +9,6 @@ import Link from "next/link";
 import Image from "next/image";
 import React from "react";
 
-import Comments from "../comments/Comments";
-
 import Blocks from "editorjs-blocks-react-renderer";
 import moment from "moment";
 import { useAppSelector } from "@/hooks/reduxHooks";
@@ -23,10 +21,11 @@ const PostArticle = ({ post }: { post: TPost }) => {
   const { isOpen, onOpenChange, onOpen, onClose } = useDisclosure();
 
   const { user } = useAppSelector((state) => state.auth);
-
+  
+  console.log(post.content.blocks)
   return (
     <>
-      <div className="pb-4 w-[50%] ml-[27rem] mt-[2rem]">
+      <div className="pb-4 w-[99%] md:w-[50%] mx-auto mt-[2rem]">
         <header>
           <h1 className="mb-6 mt-4 scroll-m-20 lg:text-5xl md:text-4xl text-3xl sm:font-extrabold font-bold tracking-tight">
             {post.title}
@@ -75,8 +74,8 @@ const PostArticle = ({ post }: { post: TPost }) => {
                 src={post.image}
                 width={300}
                 height={200}
-                // className="w-full h-full object-cover max-h-[350px] md:aspect-[5/2] aspect-[2/2]"
-                className="rounded-md object-cover w-full h-full aspect-[4/2]"
+                className="w-full h-full object-cover max-h-[350px] md:aspect-[5/2] rounded-md aspect-[2/2]"
+                // className="rounded-md object-cover w-full h-full aspect-[4/2]"
                 alt={post.title}
               />
             </figure>

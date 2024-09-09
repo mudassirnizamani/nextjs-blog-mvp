@@ -1,6 +1,5 @@
 import { JsonMetadata, parseMetadataFile } from "@/metadata/metadata_parser";
 import type { Metadata } from "next";
-import path from "path";
 
 type Props = {
   params: { postId: string, userId: string };
@@ -12,33 +11,33 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   let metadata: JsonMetadata = {}
   try {
-    const metadataPath = path.join(process.cwd(), 'public', 'metadata.json');
-    metadata = parseMetadataFile(metadataPath);
+    metadata = parseMetadataFile();
   } catch (e) {
     console.log("error occurred while parsing the file")
   }
 
   return {
-    title: metadata[id].title,
-    description: metadata[id].description,
+    title: metadata[id]?.title ?? "",
+    description: metadata[id]?.description ?? "",
     openGraph: {
-      images: metadata[id].image,
-      title: metadata[id].title,
-      description: metadata[id].description,
+      images: metadata[id]?.image ?? "",
+      title: metadata[id]?.title ?? "",
+      description: metadata[id]?.description ?? "",
       type: "article",
       url: `https://madeafamily.com/`
     },
     twitter: {
-      images: metadata[id].image,
-      title: metadata[id].title,
-      description: metadata[id].description,
+      images: metadata[id]?.image ?? "",
+      title: metadata[id]?.title ?? "",
+      description: metadata[id]?.description ?? "",
     }
   };
 }
 
 
 const PostLayout = ({ children }: { children: React.ReactNode }) => {
-  return <>{children}</>;
+  return <>
+    {children}</>;
 };
 
 export default PostLayout;

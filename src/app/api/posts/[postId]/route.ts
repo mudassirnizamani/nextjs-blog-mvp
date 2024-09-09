@@ -4,8 +4,9 @@ import { getPublicIdCloudinary } from "@/utils/getPublicIdCloudinary";
 import { NextRequest, NextResponse } from "next/server";
 import { uploadImageToCloudinary } from "@/utils/uploadImageToCloudinary";
 import { deleteOne, findMany, findOne, updateOne } from "@/utils/mongodbHelpers";
-import { CommentModel, PostModel, ReplyModel } from "@/models/user_model";
+import { CommentModel, PostModel, ReplyModel, UserModel } from "@/models/user_model";
 import db from "@/lib/db";
+import { JsonMetadata, deleteRecord, updateJsonFile } from "@/metadata/metadata_parser";
 
 //@description     Get a single post
 //@route           GET /api/posts/[post.path]
@@ -92,6 +93,9 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
+    const user = await findOne<UserModel>("users", { id: userID })
+
+
     const post = await findOne<PostModel>("posts", { id: postId });
     if (!post || !postId) {
       return NextResponse.json(
@@ -135,6 +139,14 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
+    const saveJsonDate: JsonMetadata = {
+      [`${user?.username}/${post.path}`]: {
+        image: updatedData.image ?? post.image, title: updatedData.title ?? post.title, description: "This is a post from MeadeaFamily"
+      },
+    }
+
+    updateJsonFile(saveJsonDate)
+
     return NextResponse.json(
       { success: true, message: "Your post has updated successfully" },
       { status: 201 }
@@ -164,6 +176,8 @@ export async function DELETE(req: NextRequest) {
         { status: 401 }
       );
     }
+
+    const user = await findOne<UserModel>("users", { id: userID })
 
     const post = await findOne<PostModel>("posts", {
       id: postId, authorId: userID,
@@ -202,8 +216,10 @@ export async function DELETE(req: NextRequest) {
     }
 
     await deleteOne("posts", {
-      d: post.id, authorId: userID
+      id: post.id, authorId: userID
     });
+
+    deleteRecord(`${user?.username}/${post.path}`)
 
     return NextResponse.json(
       { success: true, message: "Your post deleted successfully" },
