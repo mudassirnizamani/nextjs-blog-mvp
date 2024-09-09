@@ -24,7 +24,9 @@ export async function POST(req: NextRequest) {
 
     const { title, content, image, type } = await req.json();
 
-    const makePath = title.split(" ").join("-").toLowerCase();
+    // const makePath = title.split(" ").join("-").toLowerCase();
+    // const makePath = title.replace(/[^a-zA-Z0-9 ]/g, "").split(" ").join("-").toLowerCase();
+    const makePath = title.replace(/[^a-zA-Z0-9 ]/g, "").replace(/[._:]/g, "").split(" ").join("-").toLowerCase();
     let uploadedImage = null;
     // if (image !== null) {
     //   uploadedImage = await cloudinary.uploader.upload(image, {
@@ -49,8 +51,6 @@ export async function POST(req: NextRequest) {
 
     await db.collection("posts").insertOne(newPost)
 
-    console.log('created post')
-
     const saveJsonDate: JsonMetadata = {
       [`${user?.username}/${makePath}`]: {
         image: newPost.image ?? "",
@@ -60,7 +60,6 @@ export async function POST(req: NextRequest) {
     }
     updateJsonFile(saveJsonDate)
 
-    console.log('update json')
     return NextResponse.json(
       { success: true, message: "Post created successfully", newPost, author: user },
       { status: 201 }

@@ -7,7 +7,9 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const id = `${params.userId}/${params.postId}`;
+  const id = decodeURIComponent(`${params.userId}/${params.postId}`);
+
+  console.log(id)
 
   let metadata: JsonMetadata = {}
   try {
@@ -16,6 +18,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     console.log("error occurred while parsing the file")
   }
 
+  console.log(metadata)
+  console.log(metadata[id])
   return {
     title: metadata[id]?.title ?? "",
     description: metadata[id]?.description ?? "",
