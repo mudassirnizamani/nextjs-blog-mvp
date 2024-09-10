@@ -50,25 +50,15 @@ const Navbar = () => {
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             className="sm:hidden"
           />
-          <NavbarBrand className="basis-0 grow-0">
-            { /* <Button
-              href={"/"}
-              as={Link}
-              variant="solid"
-              isIconOnly
-              aria-label="next-blog home page"
-              radius="sm"
-              className=" bg-black/90 text-white"
-            >
-              TEN
-            </Button> */}
-            <Image
-              src="/logo.jpg" // replace with your image path
-              alt="next-blog home page"
-              width={50} // replace with your desired width
-              height={50} // replace with your desired height
-              className="bg-black/90"
-            />
+          <NavbarBrand className="flex-grow">
+            <Link href="/">
+              <Image
+                src="/logo.jpg" // replace with your image path
+                alt=""
+                width={50} // replace with your desired width
+                height={50} // replace with your desired height
+              />
+            </Link>
           </NavbarBrand>
           {/* ---SEARCH BAR--- */}
           <div className="max-md:hidden ">
