@@ -14,6 +14,7 @@ import moment from "moment";
 import { useAppSelector } from "@/hooks/reduxHooks";
 import DeletePostModal from "./DeletePostModal";
 import { useRouter } from "next/navigation";
+import Script from "next/script";
 
 const PostArticle = ({ post }: { post: TPost }) => {
   const router = useRouter();
@@ -21,12 +22,32 @@ const PostArticle = ({ post }: { post: TPost }) => {
   const { isOpen, onOpenChange, onOpen, onClose } = useDisclosure();
 
   const { user } = useAppSelector((state) => state.auth);
-  
+
   console.log(post.content.blocks)
   return (
     <>
       <div className="pb-4 w-[99%] md:w-[50%] mx-auto mt-[2rem]">
         <header>
+          <div
+            dangerouslySetInnerHTML={{
+              __html: `
+                <script type="text/javascript">
+                  atOptions = {
+                    'key' : '16be8fd4eab8b3d227f91f56f4a6eb8e',
+                    'format' : 'iframe',
+                    'height' : 50,
+                    'width' : 320,
+                    'params' : {}
+                  };
+                  document.write('<scr' + 'ipt src="https://www.adsterra.com/codes/'+atOptions.key+'/min.js" type="text/javascript"></scr' + 'ipt>');
+                </script>
+                <script type="text/javascript" src="//www.topcreativeformat.com/16be8fd4eab8b3d227f91f56f4a6eb8e/invoke.js"></script>
+              `,
+            }}
+          />
+
+          <Script type="text/javascript" src="//www.topcreativeformat.com/16be8fd4eab8b3d227f91f56f4a6eb8e/invoke.js"></Script>
+
           <h1 className="mb-6 mt-4 scroll-m-20 lg:text-5xl md:text-4xl text-3xl sm:font-extrabold font-bold tracking-tight">
             {post.title}
           </h1>
